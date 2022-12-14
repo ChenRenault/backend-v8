@@ -1,0 +1,185 @@
+diff --git a/include/v8.h b/include/v8.h
+index 18d72f1630..186bc0326e 100644
+--- a/include/v8.h
++++ b/include/v8.h
+@@ -7798,6 +7798,10 @@ enum JitCodeEventOptions {
+  */
+ typedef void (*JitCodeEventHandler)(const JitCodeEvent* event);
+ 
++typedef void (*TraceEnterEventHandler)(Isolate* isolate, Local<StackFrame> stack_frame);
++
++typedef void (*TraceExitEventHandler)(Isolate* isolate);
++
+ /**
+  * Callback function passed to SetUnhandledExceptionCallback.
+  */
+@@ -9229,6 +9233,10 @@ class V8_EXPORT Isolate {
+   void SetJitCodeEventHandler(JitCodeEventOptions options,
+                               JitCodeEventHandler event_handler);
+ 
++  void SetTraceEnterEventHandler(TraceEnterEventHandler event_handler);
++
++  void SetTraceExitEventHandler(TraceExitEventHandler event_handler);
++
+   /**
+    * Modifies the stack limit for this Isolate.
+    *
+diff --git a/src/api/api.cc b/src/api/api.cc
+index 93780bceec..1a7197d01e 100644
+--- a/src/api/api.cc
++++ b/src/api/api.cc
+@@ -8795,6 +8795,16 @@ void Isolate::SetJitCodeEventHandler(JitCodeEventOptions options,
+   isolate->logger()->SetCodeEventHandler(options, event_handler);
+ }
+ 
++void Isolate::SetTraceEnterEventHandler(TraceEnterEventHandler event_handler) {
++  i::Isolate* isolate = reinterpret_cast<i::Isolate*>(this);
++  isolate->trace_enter_event_handler_ = event_handler;
++}
++
++void Isolate::SetTraceExitEventHandler(TraceExitEventHandler event_handler) {
++  i::Isolate* isolate = reinterpret_cast<i::Isolate*>(this);
++  isolate->trace_exit_event_handler_ = event_handler;
++}
++
+ void Isolate::SetStackLimit(uintptr_t stack_limit) {
+   i::Isolate* isolate = reinterpret_cast<i::Isolate*>(this);
+   CHECK(stack_limit);
+diff --git a/src/execution/isolate.h b/src/execution/isolate.h
+index de00d862a3..583d8bf966 100644
+--- a/src/execution/isolate.h
++++ b/src/execution/isolate.h
+@@ -1867,6 +1867,12 @@ class V8_EXPORT_PRIVATE Isolate final : private HiddenFactory {
+   friend class TestSerializer;
+ 
+   DISALLOW_COPY_AND_ASSIGN(Isolate);
++
++ public:
++  TraceEnterEventHandler trace_enter_event_handler_ = nullptr;
++
++  TraceExitEventHandler trace_exit_event_handler_ = nullptr;
++
+ };
+ 
+ #undef FIELD_ACCESSOR
+diff --git a/src/runtime/runtime-test.cc b/src/runtime/runtime-test.cc
+index db804490f4..14a6129c04 100644
+--- a/src/runtime/runtime-test.cc
++++ b/src/runtime/runtime-test.cc
+@@ -26,6 +26,7 @@
+ #include "src/logging/counters.h"
+ #include "src/objects/heap-object-inl.h"
+ #include "src/objects/js-array-inl.h"
++#include "src/objects/frame-array-inl.h"
+ #include "src/objects/js-regexp-inl.h"
+ #include "src/objects/smi.h"
+ #include "src/snapshot/snapshot.h"
+@@ -923,33 +924,72 @@ RUNTIME_FUNCTION(Runtime_DisassembleFunction) {
+   return ReadOnlyRoots(isolate).undefined_value();
+ }
+ 
+-namespace {
++// namespace {
+ 
+-int StackSize(Isolate* isolate) {
+-  int n = 0;
+-  for (JavaScriptFrameIterator it(isolate); !it.done(); it.Advance()) n++;
+-  return n;
+-}
++// int StackSize(Isolate* isolate) {
++//   int n = 0;
++//   for (JavaScriptFrameIterator it(isolate); !it.done(); it.Advance()) n++;
++//   return n;
++// }
+ 
+-void PrintIndentation(Isolate* isolate) {
+-  const int nmax = 80;
+-  int n = StackSize(isolate);
+-  if (n <= nmax) {
+-    PrintF("%4d:%*s", n, n, "");
+-  } else {
+-    PrintF("%4d:%*s", n, nmax, "...");
+-  }
+-}
++// void PrintIndentation(Isolate* isolate) {
++//   const int nmax = 80;
++//   int n = StackSize(isolate);
++//   if (n <= nmax) {
++//     PrintF("%4d:%*s", n, n, "");
++//   } else {
++//     PrintF("%4d:%*s", n, nmax, "...");
++//   }
++// }
+ 
+-}  // namespace
++// }  // namespace
+ 
+ RUNTIME_FUNCTION(Runtime_TraceEnter) {
+-  SealHandleScope shs(isolate);
+-  DCHECK_EQ(0, args.length());
+-  PrintIndentation(isolate);
+-  JavaScriptFrame::PrintTop(isolate, stdout, true, false);
+-  PrintF(" {\n");
+-  return ReadOnlyRoots(isolate).undefined_value();
++  if (isolate->trace_enter_event_handler_) {
++    HandleScope scope(isolate);
++    DCHECK_EQ(0, args.length());
++    JavaScriptFrameIterator it(isolate);
++    while (!it.done()) {
++      if (it.frame()->is_java_script()) {
++        JavaScriptFrame* frame = it.frame();
++        Handle<FrameArray> frame_array =
++            isolate->factory()->NewFrameArray(1);
++        Code code = frame->LookupCode();
++        Handle<AbstractCode> abstract_code(AbstractCode::cast(code), isolate);
++        const int offset = static_cast<int>(frame->pc() - code.InstructionStart());
++        int flags = 0;
++        Handle<JSFunction> function(frame->function(), isolate);
++        Handle<Object> receiver(frame->receiver(), isolate);
++        Handle<FixedArray> parameters = isolate->factory()->empty_fixed_array();
++
++        if (frame->IsConstructor()) flags |= FrameArray::kIsConstructor;
++
++        frame_array = FrameArray::AppendJSFrame(
++            frame_array,
++            receiver->IsTheHole(isolate)
++               ? Handle<Object>::cast(isolate->factory()->undefined_value())
++               : receiver,
++               function,
++            abstract_code, offset, flags, parameters);
++
++        frame_array->ShrinkToFit(isolate);
++
++        Handle<StackTraceFrame> stack_trace_frame =
++            isolate->factory()->NewStackTraceFrame(frame_array, 0);
++
++        isolate->trace_enter_event_handler_(reinterpret_cast<v8::Isolate*>(isolate),
++            Utils::StackFrameToLocal(stack_trace_frame));
++
++        return ReadOnlyRoots(isolate).undefined_value();;
++      }
++      it.Advance();
++    }
++    isolate->trace_enter_event_handler_(reinterpret_cast<v8::Isolate*>(isolate), v8::Local<v8::StackFrame>());
++    return ReadOnlyRoots(isolate).undefined_value();
++  } else {
++    SealHandleScope shs(isolate);
++    return ReadOnlyRoots(isolate).undefined_value();
++  }
+ }
+ 
+ 
+@@ -957,10 +997,9 @@ RUNTIME_FUNCTION(Runtime_TraceExit) {
+   SealHandleScope shs(isolate);
+   DCHECK_EQ(1, args.length());
+   CONVERT_ARG_CHECKED(Object, obj, 0);
+-  PrintIndentation(isolate);
+-  PrintF("} -> ");
+-  obj.ShortPrint();
+-  PrintF("\n");
++  if (isolate->trace_exit_event_handler_) {
++    isolate->trace_exit_event_handler_(reinterpret_cast<v8::Isolate*>(isolate));
++  }
+   return obj;  // return TOS
+ }
+ 

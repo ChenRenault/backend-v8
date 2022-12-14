@@ -34,6 +34,10 @@ node %~dp0\node-script\rep.js  build\config\win\BUILD.gn
 echo =====[ commenting out Zc_inline  ]=====
 node -e "const fs = require('fs'); fs.writeFileSync('./build/config/compiler/BUILD.gn', fs.readFileSync('./build/config/compiler/BUILD.gn', 'utf-8').replace('\"/Zc:inline\"', '#\"/Zc:inline\"'));
 
+echo "=====[ Patching V8 ]====="
+echo "=====[ --Runtime Trace Hook ]====="
+node %~dp0\node-script\do-gitpatch.js -p %GITHUB_WORKSPACE%\patches\runtime_trace_hook.patch
+
 echo =====[ add ArrayBuffer_New_Without_Stl ]=====
 node %~dp0\node-script\add_arraybuffer_new_without_stl.js .
 

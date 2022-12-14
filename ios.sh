@@ -21,6 +21,10 @@ gclient sync
 # git apply --cached $GITHUB_WORKSPACE/patches/builtins-puerts.patches
 # git checkout -- .
 
+echo "=====[ Patching V8 ]====="
+echo "=====[ --Runtime Trace Hook ]====="
+node $GITHUB_WORKSPACE/node-script/do-gitpatch.js -p $GITHUB_WORKSPACE/patches/runtime_trace_hook.patch
+
 echo "=====[ add ArrayBuffer_New_Without_Stl ]====="
 node $GITHUB_WORKSPACE/node-script/add_arraybuffer_new_without_stl.js .
 

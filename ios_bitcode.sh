@@ -20,6 +20,9 @@ gclient sync
 
 
 echo "=====[ Patching V8 ]====="
+echo "=====[ --Runtime Trace Hook ]====="
+node $GITHUB_WORKSPACE/node-script/do-gitpatch.js -p $GITHUB_WORKSPACE/patches/runtime_trace_hook.patch
+
 # git apply --cached $GITHUB_WORKSPACE/patches/builtins-puerts.patches
 node $GITHUB_WORKSPACE/node-script/do-gitpatch.js -p $GITHUB_WORKSPACE/patches/bitcode.patches
 

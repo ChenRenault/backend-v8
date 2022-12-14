@@ -28,6 +28,10 @@ call gclient sync
 @REM call git apply --cached --reject %GITHUB_WORKSPACE%\patches\builtins-puerts.patches
 @REM call git checkout -- .
 
+echo "=====[ Patching V8 ]====="
+echo "=====[ --Runtime Trace Hook ]====="
+node %~dp0\node-script\do-gitpatch.js -p %GITHUB_WORKSPACE%\patches\runtime_trace_hook.patch
+
 @REM issue #4
 node %~dp0\node-script\do-gitpatch.js -p %GITHUB_WORKSPACE%\patches\intrin.patch
 

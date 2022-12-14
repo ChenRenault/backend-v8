@@ -28,6 +28,10 @@ call gclient sync
 @REM call git apply --cached --reject %GITHUB_WORKSPACE%\patches\builtins-puerts.patches
 @REM call git checkout -- .
 
+echo "=====[ Patching V8 ]====="
+echo "=====[ --Runtime Trace Hook ]====="
+node %~dp0\node-script\do-gitpatch.js -p %GITHUB_WORKSPACE%\patches\runtime_trace_hook.patch
+
 echo =====[ add ArrayBuffer_New_Without_Stl ]=====
 node %~dp0\node-script\add_arraybuffer_new_without_stl.js .
 
