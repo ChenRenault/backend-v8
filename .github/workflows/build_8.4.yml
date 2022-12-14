@@ -22,11 +22,12 @@ jobs:
         node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
-    - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm install
+    - name: Use Node.js ${{ matrix.node_version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node_version }}
+    - name: npm install
+      run: npm install
     - name: Run build script
       run: |
         cd $GITHUB_WORKSPACE
@@ -44,11 +45,12 @@ jobs:
         node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
-    - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm install
+    - name: Use Node.js ${{ matrix.node_version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node_version }}
+    - name: npm install
+      run: npm install
     - name: Run build script
       run: |
         cd $GITHUB_WORKSPACE
@@ -66,11 +68,12 @@ jobs:
         node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
-    - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm install
+    - name: Use Node.js ${{ matrix.node_version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node_version }}
+    - name: npm install
+      run: npm install
     - name: Run build script
       run: |
         cd $GITHUB_WORKSPACE
@@ -88,11 +91,12 @@ jobs:
         node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
-    - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm install
+    - name: Use Node.js ${{ matrix.node_version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node_version }}
+    - name: npm install
+      run: npm install
     - name: Run build script
       run: |
         cd $GITHUB_WORKSPACE
@@ -110,11 +114,12 @@ jobs:
         node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
-    - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm install
+    - name: Use Node.js ${{ matrix.node_version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node_version }}
+    - name: npm install
+      run: npm install
     - name: Run build script
       run: |
         cd $GITHUB_WORKSPACE
@@ -132,11 +137,12 @@ jobs:
         node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
-    - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm install
+    - name: Use Node.js ${{ matrix.node_version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node_version }}
+    - name: npm install
+      run: npm install
     - name: Run build script
       shell: cmd
       run: |
@@ -160,11 +166,12 @@ jobs:
         node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
-    - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm install
+    - name: Use Node.js ${{ matrix.node_version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node_version }}
+    - name: npm install
+      run: npm install
     - name: Run build script
       shell: cmd
       run: |
@@ -183,11 +190,12 @@ jobs:
         node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
-    - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm install
+    - name: Use Node.js ${{ matrix.node_version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node_version }}
+    - name: npm install
+      run: npm install
     - name: Run build script
       shell: cmd
       run: |
@@ -206,11 +214,12 @@ jobs:
         node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
-    - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm install
+    - name: Use Node.js ${{ matrix.node_version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node_version }}
+    - name: npm install
+      run: npm install
     - name: Run build script
       shell: cmd
       run: |
@@ -229,11 +238,12 @@ jobs:
         node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
-    - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm install
+    - name: Use Node.js ${{ matrix.node_version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node_version }}
+    - name: npm install
+      run: npm install
     - name: Use Xcode 12.0 to use SDK 10.15
       run: sudo xcode-select -switch "/Applications/Xcode_12.app"
     - name: Run build script
@@ -253,11 +263,12 @@ jobs:
         node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
-    - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm install
+    - name: Use Node.js ${{ matrix.node_version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node_version }}
+    - name: npm install
+      run: npm install
     - name: Use Xcode 12.0 to use SDK 10.15
       run: sudo xcode-select -switch "/Applications/Xcode_12.app"
     - name: Run build script
@@ -277,11 +288,12 @@ jobs:
         node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
-    - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm install
+    - name: Use Node.js ${{ matrix.node_version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node_version }}
+    - name: npm install
+      run: npm install
     - name: Use Xcode 12.0 to use SDK 10.15
       run: sudo xcode-select -switch "/Applications/Xcode_12.app"
     - name: Run build script
