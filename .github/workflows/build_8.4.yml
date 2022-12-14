@@ -17,8 +17,16 @@ jobs:
   build_android_arm_v8:
     name: Android (arm64-v8a)
     runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
+    - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install
     - name: Run build script
       run: |
         cd $GITHUB_WORKSPACE
@@ -31,8 +39,16 @@ jobs:
   build_android_arm_v7:
     name: Android (armeabi-v7a)
     runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
+    - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install
     - name: Run build script
       run: |
         cd $GITHUB_WORKSPACE
@@ -45,8 +61,16 @@ jobs:
   build_android_x86_64:
     name: Android (x86_64)
     runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
+    - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install
     - name: Run build script
       run: |
         cd $GITHUB_WORKSPACE
@@ -59,8 +83,16 @@ jobs:
   build_linux:
     name: Linux
     runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
+    - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install
     - name: Run build script
       run: |
         cd $GITHUB_WORKSPACE
@@ -73,8 +105,16 @@ jobs:
   build_linux_arm64:
     name: Linux_arm64
     runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
+    - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install
     - name: Run build script
       run: |
         cd $GITHUB_WORKSPACE
@@ -87,8 +127,16 @@ jobs:
   build_windows:
     name: Windows
     runs-on: windows-2019
+    strategy:
+      matrix:
+        node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
+    - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install
     - name: Run build script
       shell: cmd
       run: |
@@ -107,8 +155,16 @@ jobs:
   build_windows_md:
     name: Windows-MD
     runs-on: windows-2019
+    strategy:
+      matrix:
+        node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
+    - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install
     - name: Run build script
       shell: cmd
       run: |
@@ -122,8 +178,16 @@ jobs:
   build_windows_md_dll:
     name: Windows-MD-DLL
     runs-on: windows-2019
+    strategy:
+      matrix:
+        node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
+    - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install
     - name: Run build script
       shell: cmd
       run: |
@@ -137,8 +201,16 @@ jobs:
   build_windows_32:
     name: Windows-32
     runs-on: windows-2019
+    strategy:
+      matrix:
+        node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
+    - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install
     - name: Run build script
       shell: cmd
       run: |
@@ -152,8 +224,16 @@ jobs:
   build_macos:
     name: macOS
     runs-on: macos-10.15
+    strategy:
+      matrix:
+        node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
+    - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install
     - name: Use Xcode 12.0 to use SDK 10.15
       run: sudo xcode-select -switch "/Applications/Xcode_12.app"
     - name: Run build script
@@ -168,8 +248,16 @@ jobs:
   build_macos_dll:
     name: macOS-DLL
     runs-on: macos-10.15
+    strategy:
+      matrix:
+        node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
+    - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install
     - name: Use Xcode 12.0 to use SDK 10.15
       run: sudo xcode-select -switch "/Applications/Xcode_12.app"
     - name: Run build script
@@ -184,8 +272,16 @@ jobs:
   build_ios:
     name: iOS
     runs-on: macos-10.15
+    strategy:
+      matrix:
+        node: [ 14, 16, 18 ]
     steps:
     - uses: actions/checkout@v2
+    - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install
     - name: Use Xcode 12.0 to use SDK 10.15
       run: sudo xcode-select -switch "/Applications/Xcode_12.app"
     - name: Run build script
